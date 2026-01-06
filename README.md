@@ -17,6 +17,12 @@ A lightweight, self-contained cheminformatics library written in native JavaScri
 - **Standards**: InChI and InChIKey generation (with WASM library)
 - **Lightweight**: ~350KB uncompressed, <50KB when minimized and compressed
 
+## Basic Live Demos
+
+[Path Notation Example](https://tylerperyea.github.io/JSChemify/path.html)
+[Spreadsheet](https://tylerperyea.github.io/JSChemify/spreadsheet.html)
+
+
 ## Quick Start
 
 ### Basic Usage
