@@ -1,6 +1,6 @@
 # JSChemify
 
-A lightweight, self-contained cheminformatics library written in native JavaScript. JSChemify provides essential chemical structure manipulation, analysis, and visualization capabilities directly in the browser without requiring external dependencies.
+A "pretty okay" lightweight, self-contained cheminformatics library written in native JavaScript. JSChemify provides essential chemical structure manipulation, analysis, and visualization capabilities directly in the browser without requiring external dependencies.
 
 ## Features
 
@@ -217,7 +217,13 @@ The library includes several complete examples:
 
 ## License
 
-Public Domain - Use freely for any purpose. No warranty provided.
+The Woody Guthrie License
+
+This code belongs to everybody. Anyone caught using, copying, modifying, or redistributing this software will be a mighty fine friend of ours. Use it, hack it, share it, sell it, teach it. We wrote it and that's all we wanted to do.
+
+This software is released into the public domain. No warranty provided - if it breaks, you get to keep both pieces. But hey, that's what makes it fun!
+
+(Technically this is an MIT license though, if you're a nerd about such things).
 
 ## Contributing
 
