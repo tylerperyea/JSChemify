@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
+  <style>
+      body{
+	font-family:monospace;
+      }
+      textarea{
+        width:100%;
+        min-height:200px;
+	white-space: pre;
+    	overflow-wrap: normal;
+    	overflow-x: scroll;
+      }
+      div.panel{
+          display:inline-block;
+          padding:10px;
+      }
+      div.panel.full{
+          display:block;
+      }
+      div.structure-image{
+          width:300px;
+      }
+      input#formula{
+	  width:100%;
+      }
+      
+      .jschemify-tbl-smiles {
+          max-width: 300px;
+          max-height: 15px;
+          min-height: 15px;
+          overflow-x: hidden;
+	  width: 300px;    
+      }
+	  
+   </style>
+  <script src="jschemify.js"></script>
+
+  <script>
+    let mcol;
+    let newProps=[];
+    function load(){
+	let col=JSChemify.ChemicalCollection()
+		         .fromSmilesFile(document.getElementById("input").value.trim());
+    	document.getElementById("spreadsheet").innerHTML=col.$getTableHTML(20);
+	mcol=col;
+    }
+    function calculate(){
+	let decorate=document.getElementById("decorate").checked;
+	let form=document.getElementById("formula").value.trim();
+	let name=document.getElementById("formula-name").value.trim();
+	newProps.push(name);
+        mcol.computeNewProperty(name,(c)=>{
+	    let ev=eval(form);
+	    if(ev && ev.serialize){
+		ev=ev.serialize();
+	    }
+	    if(JSChemify.Util.isPromise(ev)){
+		    return ev.then(ee=>{
+                       if(ee && ee.serialize){
+                           ee=ee.serialize();
+		       }
+		       if(typeof ee === "object"){
+                             return JSON.stringify(ee);
+		       }
+		       return ee;
+		    });
+	    }else{
+		    if(typeof ev ==="object"){
+			ev=JSON.stringify(ev);
+		    }
+	    }
+            return ev;
+        },decorate);
+	setTimeout(()=>{
+        	mcol.refresh();
+	},1000);
+    }
+    function revert(){
+	newProps.map(np=>mcol.removeProperty(np));
+	newProps=[];
+	mcol.refresh();
+    };
+  </script>
+  
+</head>  
+<body>
+<div class="panel full">
+<h1>JSChemify Example</h1>
+<p>
+  This is an interactive example of JSChemify, a "pretty okay" basic cheminformatics library written in native javascript.
+</p>
+	
+<p>
+This example shows a basic molecular spreadsheet. You can copy/paste a raw tab-delimited dataset into the "Edit Row Data" 
+area (make sure the smiles column is named "smiles"), then click "show table" and it will create an interactive chemical 
+spreadsheet. You can provide a smiles string to search on, and it will use the "E-State" vectors of Kier&amp;Hall to 
+compare your query molecule to the set of molecules in the spreadsheet.
+</p>
+	
+<p>
+At the bottom of this page, you can add a custom new column to the spreadsheet. The example shown recalculates the linear 
+regression model published by Kier&amp;Hall to predict N-Nitrosamine mutagenicity. Several other examples are shown. 
+</p>
+	
+<p>
+The dataset can be downloaded either as a TXT (smiles) file, or as an SDF.
+</p>
+	
+</div>	
+<div class="panel full">
+<div id="spreadsheet">
+<textarea id="input">
+Name	Smiles	LN R	KH eq 1	KH eq 2
+Dipropyl-N-nitrosamine	CCCN(CCC)N=O	-2.526	-2.573	-2.711
+Dibutyl-N-nitrosamine	CCCCN(CCCC)N=O	-1.897	-3.276	-2.128
+Dipentyl-N-nitrosamine	CCCCCN(CCCCC)N=O	-2.996	-3.979	-3.747
+N-Nitrosopyrrolidine	C1(CCN(C1)N=O)	-3.912	-3.626	-4.232
+N-Nitrosomorpholine	C1(COCCN(1)N=O)	-2.813	-2.247	-1.857
+N-Nitrosopiperidine	C1(CCN(CC1)N=O)	-4.605	-3.977	-4.798
+N-Methyl-N-nitroso-N'nitro-guanidine	CN(C(=N)N[N](=O)=O)N=O	7.226	5.176	5.287
+N-Ethyl-N-nitroso-N'-nitro-guanidine	CCN=C(N)N(N=O)[N](=O)=O	5.858	4.513	4.02
+N-Propyl-N-nitroso-N'-nitro-guanidine	CCCN(C(=N[N](=O)=O)N)N=O	3.689	4.161	3.791
+N-Butyl-N-nitroso-N'-nitro-guanidine	CCCCN(C(=N)N[N](=O)=O)N=O	3.892	3.811	3.959
+N-Isobutyl-N-nitroso-N'-nitro-guanidine	CC(C)CN(C(=N)N[N](=O)=O)N=O	4.344	4.792	5.304
+N-Pentyl-N-nitroso-N'-nitro-guanidine	CCCCCN(C(=N)N[N](=O)=O)N=O	3.091	3.669	3.264
+N-Hexyl-N-nitroso-N'-nitro-guanidine	CCCCCCN(C(=N)N[N](=O)=O)N=O	1.668	3.317	2.699
+N-Nitrosomethylurea	CN(C(=O)N)N=O	1.482	1.716	2.676
+N-Nitrosoethylurea	CCN(C(=O)N)N=O	0.095	1.117	1.069
+</textarea>
+</div>
+<p><a href="https://pubmed.ncbi.nlm.nih.gov/347051/">Data from: Kier LB, Simons RJ, Hall LH. Structure--activity studies on mutagenicity of nitrosamines using molecular connectivity. J Pharm Sci. 1978 May;67(5):725-6. doi: 10.1002/jps.2600670548. PMID: 347051.</a></p>
+
+</div>
+<div class="panel full">
+    <div class="panel full">
+	   <p>Select example forumula</p>
+	   <select onchange="document.getElementById('formula').value=this.value;calculate();">
+	      <option>2.398*c.getConnectivityIndexS(0)-4.095*c.getConnectivityIndexV(1)-5.590</option>
+	      <option>2.946*c.getConnectivityIndexS(2)-9.090*c.getConnectivityIndexV(4)-4.662</option>
+	      <option>c.getMolFormula()</option>
+	      <option>c.getMolWeight()</option>
+	      <option>c.getEStateVector()</option>
+	      <option>c.getAtomCount()</option>
+	      <option>c.getBondCount()</option>
+	      <option>c.toInChIKeyPromise()</option>
+	   </select>
+   </div>
+<div class="panel full">
+	<div>
+		<div>
+   <label for="formula-name">Name of Property</label>
+		</div>
+   <input id="formula-name" value="JSChemify Value">
+	</div>
+	<div>
+		<div>
+   <label for="formula">Formula to Calculate</label>
+		</div>
+   <input id="formula" value="2.398*c.getConnectivityIndexS(0)-4.095*c.getConnectivityIndexV(1)-5.590">
+   <label for="decorate">Highlight Structure</label>
+   <input type="checkbox" name="decorate" id="decorate" checked >
+   <button onclick="calculate()">Add New Property</button>
+		<button onclick="revert()">Delete All added Properties</button>
+	</div>
+	
+</div>
+</div>
+<script>
+	setTimeout(()=>{
+	load();
+	calculate();
+		},1);
+</script>
+</body> 
+</html>
