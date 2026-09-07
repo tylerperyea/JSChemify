@@ -2,6 +2,7 @@
 
 A "pretty okay" lightweight, self-contained cheminformatics library written in native JavaScript. JSChemify provides essential chemical structure manipulation, analysis, and visualization capabilities directly in the browser without requiring external dependencies.
 
+
 ## Features
 
 - **Chemical I/O**: SMILES and Molfile import/export
